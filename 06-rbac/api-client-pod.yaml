@@ -1,0 +1,25 @@
+# Runs as the ci ServiceAccount and calls the Kubernetes API with its token.
+# Listing Pods is allowed (200); listing Secrets is forbidden (403).
+apiVersion: v1
+kind: Pod
+metadata:
+  name: api-client
+  namespace: shop
+spec:
+  serviceAccountName: ci
+  restartPolicy: Never
+  containers:
+  - name: curl
+    image: curlimages/curl:8.16.0
+    command:
+    - sh
+    - -c
+    - |
+      SA=/var/run/secrets/kubernetes.io/serviceaccount
+      TOKEN=$(cat $SA/token)
+      API=https://kubernetes.default.svc/api/v1/namespaces/shop
+      for r in pods secrets; do
+        code=$(curl -s -o /dev/null -w '%{http_code}' --cacert $SA/ca.crt \
+          -H "Authorization: Bearer $TOKEN" $API/$r)
+        echo "list $r -> HTTP $code"
+      done

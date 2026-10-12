@@ -1,0 +1,22 @@
+# Static Pod: run by the kubelet straight from a file on the node, no API server needed.
+# Put it in the kubelet's staticPodPath (kubeadm and minikube: /etc/kubernetes/manifests).
+#   minikube cp templates/static-pod.yaml /etc/kubernetes/manifests/static-web.yaml
+#   kubectl get pods                       # static-web-<node-name>: a read-only mirror Pod
+#   minikube ssh -- sudo rm /etc/kubernetes/manifests/static-web.yaml   # stops it
+# Limits: no ConfigMaps, Secrets or ServiceAccounts; no Deployment/scheduler;
+# kubectl delete only recreates it. For "one Pod per node", use a DaemonSet instead.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: static-web
+  labels:
+    app: static-web
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.27
+    ports:
+    - containerPort: 80
+    resources:
+      requests: { cpu: 50m, memory: 32Mi }
+      limits: { memory: 64Mi }

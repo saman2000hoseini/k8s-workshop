@@ -1,0 +1,20 @@
+# Sends requests to the web Service from 4 parallel loops.
+# Delete it to stop the load:  kubectl delete pod load
+apiVersion: v1
+kind: Pod
+metadata:
+  name: load
+  labels:
+    access: "true"            # still allowed if Exercise 4's policies are applied
+spec:
+  containers:
+  - name: load
+    image: busybox:1.37
+    command:
+    - sh
+    - -c
+    - |
+      for i in 1 2 3 4; do
+        (while true; do wget -q -O /dev/null http://web; done) &
+      done
+      wait

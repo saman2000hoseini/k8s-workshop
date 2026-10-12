@@ -1,0 +1,11 @@
+# PersistentVolumeClaim: "I need 1Gi of storage". The StorageClass provisions it.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-data
+spec:
+  accessModes: ["ReadWriteOnce"]
+  # storageClassName: standard    # omit to use the cluster default
+  resources:
+    requests:
+      storage: 1Gi

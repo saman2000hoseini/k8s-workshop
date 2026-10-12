@@ -1,0 +1,49 @@
+# StatefulSet: stable names (my-db-0, my-db-1) and one PVC per Pod.
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-db
+spec:
+  clusterIP: None                 # headless
+  selector:
+    app: my-db
+  ports:
+  - port: 5432
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-db
+spec:
+  serviceName: my-db
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-db
+  template:
+    metadata:
+      labels:
+        app: my-db
+    spec:
+      containers:
+      - name: db
+        image: postgres:17
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef: { name: my-app-secret, key: DB_PASSWORD }
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-config
+data:
+  LOG_LEVEL: debug
+  FEATURE_FLAGS: "search,checkout"
+  # A whole file as a key: mounted under /etc/web/app.properties
+  app.properties: |
+    greeting=Hello from a ConfigMap
+    color=blue

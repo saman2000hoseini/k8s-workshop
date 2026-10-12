@@ -1,0 +1,17 @@
+# Challenge: this container is limited to 32Mi but tries to use ~64Mi.
+# Watch it get OOMKilled and go into CrashLoopBackOff.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: oom-demo
+spec:
+  containers:
+  - name: hog
+    image: busybox:1.37
+    # tail buffers /dev/zero in memory (it never sees a newline) until the limit
+    command: ["sh", "-c", "tail /dev/zero"]
+    resources:
+      requests:
+        memory: 16Mi
+      limits:
+        memory: 32Mi

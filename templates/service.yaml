@@ -1,0 +1,13 @@
+# Service: stable virtual IP + DNS name (my-app.<namespace>.svc.cluster.local).
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app
+spec:
+  type: ClusterIP           # ClusterIP | NodePort | LoadBalancer
+  selector:
+    app: my-app
+  ports:
+  - name: http
+    port: 80                # clients use this
+    targetPort: http        # container port (name or number)

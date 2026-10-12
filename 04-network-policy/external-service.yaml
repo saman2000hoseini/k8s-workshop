@@ -1,0 +1,27 @@
+# Challenge: a Service without a selector + an EndpointSlice you write yourself.
+# Kubernetes does not manage these endpoints; you do.
+# Replace the address with any IP that serves HTTP on port 80
+# (for example another machine on your network).
+apiVersion: v1
+kind: Service
+metadata:
+  name: outside
+spec:                       # no selector!
+  ports:
+  - name: http
+    port: 80
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: outside-1
+  labels:
+    kubernetes.io/service-name: outside                # links it to the Service
+    endpointslice.kubernetes.io/managed-by: workshop   # not the built-in controller
+addressType: IPv4
+ports:
+- name: http                # must match the Service port name
+  port: 80
+  protocol: TCP
+endpoints:
+- addresses: ["1.1.1.1"]

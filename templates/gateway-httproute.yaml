@@ -1,0 +1,21 @@
+# Gateway API: the platform team owns the Gateway, app teams own HTTPRoutes.
+# Needs the Gateway API CRDs and an implementation (Envoy Gateway, Cilium, Istio, Traefik...).
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: my-app
+spec:
+  parentRefs:
+  - name: public-gw
+    namespace: infra
+  hostnames: ["my-app.example.com"]
+  rules:
+  - matches:
+    - path: { type: PathPrefix, value: / }
+    backendRefs:
+    - name: my-app
+      port: 80
+      weight: 90
+    - name: my-app-canary
+      port: 80
+      weight: 10

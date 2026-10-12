@@ -1,0 +1,33 @@
+# Job: run to completion. CronJob: run a Job on a schedule.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrate
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: migrate
+        image: busybox:1.37
+        command: ["sh", "-c", "echo migrating... && sleep 5 && echo done"]
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nightly-report
+spec:
+  schedule: "0 2 * * *"           # every day at 02:00
+  timeZone: "Asia/Tehran"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: report
+            image: busybox:1.37
+            command: ["sh", "-c", "date; echo building report"]

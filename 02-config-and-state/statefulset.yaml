@@ -1,0 +1,44 @@
+# A headless Service + StatefulSet. Each Pod gets a stable name (db-0, db-1)
+# and its own PersistentVolumeClaim that survives Pod deletion.
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  clusterIP: None           # headless: DNS returns Pod IPs
+  selector:
+    app: db
+  ports:
+  - port: 80
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+spec:
+  serviceName: db
+  replicas: 2
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+      - name: app
+        image: busybox:1.37
+        # Writes one line per start into its own volume
+        command: ["sh", "-c", "echo \"$(hostname) started at $(date)\" >> /data/log.txt; sleep infinity"]
+        volumeMounts:
+        - name: data
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 100Mi

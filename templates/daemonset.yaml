@@ -1,0 +1,24 @@
+# DaemonSet: one Pod per node (log shippers, monitoring agents).
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-agent
+spec:
+  selector:
+    matchLabels:
+      app: node-agent
+  template:
+    metadata:
+      labels:
+        app: node-agent
+    spec:
+      tolerations:
+      - operator: Exists          # also run on control-plane nodes
+      containers:
+      - name: agent
+        image: busybox:1.37
+        command: ["sh", "-c", "while true; do echo \"$(date) on $NODE\"; sleep 30; done"]
+        env:
+        - name: NODE
+          valueFrom:
+            fieldRef: { fieldPath: spec.nodeName }

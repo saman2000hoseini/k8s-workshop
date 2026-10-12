@@ -1,0 +1,8 @@
+# Selects every Pod in the namespace and allows no ingress traffic.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  podSelector: {}
+  policyTypes: ["Ingress"]

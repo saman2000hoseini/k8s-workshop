@@ -1,0 +1,64 @@
+# Deployment: stateless app with rolling updates, probes, resources and a safe security context.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  replicas: 3
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: my-app                 # must match template labels
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      serviceAccountName: my-app  # see serviceaccount-rbac.yaml
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+      - name: app
+        image: ghcr.io/acme/my-app:1.0.0   # pin a version, never :latest
+        ports:
+        - name: http
+          containerPort: 8080
+        env:
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef: { name: my-app-config, key: LOG_LEVEL }
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef: { name: my-app-secret, key: DB_PASSWORD }
+        readinessProbe:           # receive traffic only when ready
+          httpGet: { path: /readyz, port: http }
+          periodSeconds: 5
+        livenessProbe:            # restart when stuck
+          httpGet: { path: /healthz, port: http }
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        startupProbe:             # give slow starters time before liveness kicks in
+          httpGet: { path: /healthz, port: http }
+          failureThreshold: 30
+          periodSeconds: 2
+        resources:
+          requests: { cpu: 100m, memory: 128Mi }
+          limits: { memory: 256Mi }
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: { drop: ["ALL"] }
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+      volumes:
+      - name: tmp
+        emptyDir: {}

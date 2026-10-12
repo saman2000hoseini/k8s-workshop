@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: ClusterIP
+  selector:
+    app: web              # sends traffic to Pods with this label
+  ports:
+  - name: http
+    port: 80              # what clients connect to
+    targetPort: 80        # the container port

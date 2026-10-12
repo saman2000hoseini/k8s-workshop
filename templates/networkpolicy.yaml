@@ -1,0 +1,25 @@
+# Default-deny for the namespace, then allow exactly what's needed.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  podSelector: {}
+  policyTypes: ["Ingress"]
+---
+# Allow frontend -> my-app on port 8080
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: my-app-from-frontend
+spec:
+  podSelector:
+    matchLabels: { app: my-app }
+  policyTypes: ["Ingress"]
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels: { app: frontend }
+    ports:
+    - port: 8080
+      protocol: TCP
