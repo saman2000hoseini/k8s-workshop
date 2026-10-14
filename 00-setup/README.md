@@ -9,8 +9,9 @@ You need three things on your laptop:
 Give your container engine at least **4 GB of RAM** and 2 CPUs.
 
 The first `minikube start --cni=cilium` downloads about 1.5 GB (Kubernetes plus the Cilium
-network plugin). **Do it at home before the workshop**, then run `minikube stop` (not `delete`):
-the images stay inside the minikube node and the next start takes seconds.
+network plugin), so start it as soon as the setup break begins. The node stays `NotReady`
+until Cilium is up; that's normal. After the workshop, `minikube stop` keeps everything and
+the next start takes seconds.
 
 ---
 
@@ -114,8 +115,7 @@ Some networks block Google-hosted registries (`registry.k8s.io`, `gcr.io`) with
 - `05-resources-and-autoscaling/install-metrics-server.sh` enables the metrics-server
   addon from a Docker Hub mirror.
 
-Slow Wi-Fi? Start the cluster at home (see the top of this page). The exercise images can
-also be pulled on your laptop and copied into minikube:
+Slow Wi-Fi? The exercise images can also be pulled on your laptop and copied into minikube:
 
 ```sh
 for i in nginx:1.27 busybox:1.37 curlimages/curl:8.16.0; do

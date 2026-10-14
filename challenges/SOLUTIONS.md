@@ -28,7 +28,7 @@ kubectl patch deploy greeter -n c2 --type=json \
 ## c3 · Connection refused
 
 The Service sends traffic to `targetPort: 8080`, but nginx listens on `80`. The selector is fine,
-so the EndpointSlice has Pod IPs, but every connection is refused.
+so the Endpoints list the Pod IPs, but every connection is refused.
 
 ```sh
 kubectl patch svc shop -n c3 --type=json -p '[{"op":"replace","path":"/spec/ports/0/targetPort","value":80}]'

@@ -9,8 +9,10 @@ spec:
   type: ExternalName
   externalName: pg.prod.example.com
 ---
-# 2) Custom endpoints: a Service without a selector + an EndpointSlice you manage.
+# 2) Custom endpoints: a Service without a selector + an Endpoints object you manage.
 #    Use when you only have IPs (VMs, on-prem). No health checks: keep the list up to date.
+#    kubectl warns that v1 Endpoints is deprecated; the slide
+#    "From Endpoints to EndpointSlices" shows how to migrate.
 apiVersion: v1
 kind: Service
 metadata:
@@ -20,18 +22,14 @@ spec:
   - name: pg
     port: 5432
 ---
-apiVersion: discovery.k8s.io/v1
-kind: EndpointSlice
+apiVersion: v1
+kind: Endpoints
 metadata:
-  name: legacy-db-1
-  labels:
-    kubernetes.io/service-name: legacy-db
-    endpointslice.kubernetes.io/managed-by: my-team
-addressType: IPv4
-ports:
-- name: pg                  # must match the Service port name
-  port: 5432
-  protocol: TCP
-endpoints:
-- addresses: ["10.0.5.20"]
-- addresses: ["10.0.5.21"]
+  name: legacy-db           # same name as the Service: that's the link
+subsets:
+- addresses:
+  - ip: 10.0.5.20
+  - ip: 10.0.5.21
+  ports:
+  - name: pg                # must match the Service port name
+    port: 5432

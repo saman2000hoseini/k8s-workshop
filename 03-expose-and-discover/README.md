@@ -3,7 +3,7 @@
 **Goal:** give your Pods a stable name and address, reach them by DNS, and debug the
 most common Service bug.
 
-**Concepts:** Service (ClusterIP), EndpointSlice, DNS, port-forward
+**Concepts:** Service (ClusterIP), Endpoints, DNS, port-forward
 
 Needs the `web` Deployment from Exercise 1 or 2.
 
@@ -13,7 +13,7 @@ Needs the `web` Deployment from Exercise 1 or 2.
 
    ```sh
    kubectl apply -f service.yaml          # or: kubectl expose deploy/web --port=80
-   kubectl get svc,endpointslices
+   kubectl get svc,endpoints
    ```
 
 2. **Reach it by DNS** from a throwaway Pod.
@@ -35,7 +35,7 @@ Needs the `web` Deployment from Exercise 1 or 2.
 
    ```sh
    kubectl patch svc web -p '{"spec":{"selector":{"app":"nope"}}}'
-   kubectl get endpointslices -l kubernetes.io/service-name=web
+   kubectl get endpoints web
    kubectl run tmp --rm -it --image=busybox:1.37 --restart=Never -- wget -T 3 -qO- http://web
    ```
 
@@ -49,9 +49,11 @@ Needs the `web` Deployment from Exercise 1 or 2.
 <summary>What you should see</summary>
 
 - Steps 2–3: the nginx welcome page.
-- Step 4: the EndpointSlice has no endpoints (`<unset>`) and `wget` fails with
+- Step 4: the Endpoints show `<none>` and `wget` fails with
   `Connection refused`. The Service exists, but nothing matches its selector.
   This is the most common "my Service doesn't work" bug.
+- kubectl prints `Warning: v1 Endpoints is deprecated in v1.33+`. That's expected;
+  the slide "From Endpoints to EndpointSlices" explains it.
 
 </details>
 

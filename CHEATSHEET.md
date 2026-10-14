@@ -40,5 +40,5 @@ source <(kubectl completion zsh)       # or bash
 | `ImagePullBackOff` | Wrong image/tag, private registry, blocked registry | `kubectl describe pod <pod>` |
 | `CrashLoopBackOff` | App exits on start: bad config, missing env, dependency down | `kubectl logs <pod> --previous` |
 | `OOMKilled` | Memory limit too low, or a leak | `kubectl describe pod <pod>` → Last State |
-| Running, no traffic | Selector mismatch, readiness failing, wrong targetPort | `kubectl get endpointslices -l kubernetes.io/service-name=<svc>` |
+| Running, no traffic | Selector mismatch, readiness failing, wrong targetPort | `kubectl get endpoints <svc>` |
 | Works locally, not in cluster | DNS name, NetworkPolicy, missing Secret/ConfigMap | `kubectl debug -it <pod> --image=busybox:1.37` |

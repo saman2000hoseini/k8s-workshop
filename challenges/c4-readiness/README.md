@@ -6,7 +6,7 @@
 
 ```sh
 kubectl apply -f broken.yaml
-kubectl get pods,endpointslices -n c4
+kubectl get pods,endpoints -n c4
 ```
 
 **Goal:** both Pods `1/1 Ready`, **with** a working readiness probe.

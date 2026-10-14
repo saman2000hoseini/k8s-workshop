@@ -2,7 +2,7 @@
 
 **Goal:** restrict traffic between Pods, and give an outside system an in-cluster name.
 
-**Concepts:** NetworkPolicy, default deny, label-based allow, Service without a selector, EndpointSlice
+**Concepts:** NetworkPolicy, default deny, label-based allow, Service without a selector, Endpoints
 
 Needs the `web` Deployment and Service from the earlier exercises.
 NetworkPolicies are enforced by the network plugin. On minikube they only work if you
@@ -33,12 +33,12 @@ started the cluster with `--cni=cilium` (see [00-setup](../00-setup/README.md)).
    ```
 
 4. **Challenge: custom endpoints.** Create a Service with no selector and an
-   EndpointSlice that points at an IP outside the cluster.
+   Endpoints object that points at an IP outside the cluster.
 
    ```sh
    kubectl apply -f external-service.yaml
    kubectl get svc outside
-   kubectl get endpointslices -l kubernetes.io/service-name=outside
+   kubectl get endpoints outside
    kubectl run tmp --rm -it --image=busybox:1.37 --restart=Never -- \
      sh -c 'wget -S -T 5 -O /dev/null http://outside 2>&1 | head -3'
    ```
