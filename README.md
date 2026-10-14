@@ -16,9 +16,10 @@ No git? Use **Code → Download ZIP** on GitHub. The slides are in [`slides`](sl
 
 1. **Part 1 · Concepts.** No laptop needed.
 2. **Break & cluster setup.** Follow [`00-setup`](00-setup/README.md) and run `./00-setup/verify.sh`.
-3. **Part 2 · Hands-on.** Exercises 1–3.
+3. **Part 2 · Hands-on.** Exercises 1–3, then [challenge round 1](challenges/README.md) (c1–c4).
 4. **Short break.**
-5. **Part 3 · Advanced topics.** Exercises 4–6 (optional; also great for practice at home).
+5. **Part 3 · Advanced topics.** Exercises 4–6 (optional; also great for practice at home),
+   then [challenge round 2](challenges/README.md) (c5–c7).
 
 ## Contents
 
@@ -31,6 +32,7 @@ No git? Use **Code → Download ZIP** on GitHub. The slides are in [`slides`](sl
 | [`04-network-policy`](04-network-policy/README.md) | Default deny, label-based allow, custom endpoints |
 | [`05-resources-and-autoscaling`](05-resources-and-autoscaling/README.md) | Requests/limits, QoS, metrics-server, HPA, OOMKilled |
 | [`06-rbac`](06-rbac/README.md) | ServiceAccount, Role, RoleBinding, `kubectl auth can-i` |
+| [`challenges`](challenges/README.md) | Timed fix-it challenges: something's broken, find it, `./check.sh` |
 | [`templates`](templates/README.md) | Commented manifests to copy for your own apps |
 | [`CHEATSHEET.md`](CHEATSHEET.md) | kubectl essentials and a debugging playbook |
 
@@ -38,7 +40,7 @@ Each exercise README has the steps, questions to think about, and a collapsed
 **What you should see** section to check your results.
 
 Run the exercises in order: 2–5 build on the `web` app from Exercise 1.
-Everything runs in the `default` namespace except Exercise 6 (`shop`).
+Everything runs in the `default` namespace except Exercise 6 (`shop`) and the challenges (`c1`–`c7`).
 
 > **Safety first:** if your kubeconfig also contains work clusters, check
 > `kubectl config current-context` before every exercise. It should be

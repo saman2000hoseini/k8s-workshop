@@ -6,7 +6,7 @@
 
 Needs the `web` Deployment and Service from the earlier exercises.
 NetworkPolicies are enforced by the network plugin. On minikube they only work if you
-started the cluster with `--cni=calico` (see [00-setup](../00-setup/README.md)).
+started the cluster with `--cni=cilium` (see [00-setup](../00-setup/README.md)).
 
 ## Steps
 

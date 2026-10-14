@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: c2
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: greeter-config
+  namespace: c2
+data:
+  GREETING: "Hello from Kubernetes"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: greeter
+  namespace: c2
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: greeter }
+  template:
+    metadata:
+      labels: { app: greeter }
+    spec:
+      containers:
+      - name: greeter
+        image: busybox:1.37
+        command: ["sh", "-c", "echo \"$GREETING\"; sleep 3600"]
+        env:
+        - name: GREETING
+          valueFrom:
+            configMapKeyRef:
+              name: greeter-config
+              key: greeting

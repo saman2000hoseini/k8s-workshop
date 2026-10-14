@@ -8,7 +8,9 @@ You need three things on your laptop:
 
 Give your container engine at least **4 GB of RAM** and 2 CPUs.
 
-The first `minikube start` downloads about 1 GB. If you can, do it at home before the workshop.
+The first `minikube start --cni=cilium` downloads about 1.5 GB (Kubernetes plus the Cilium
+network plugin). **Do it at home before the workshop**, then run `minikube stop` (not `delete`):
+the images stay inside the minikube node and the next start takes seconds.
 
 ---
 
@@ -54,11 +56,11 @@ alias kubectl="minikube kubectl --"
 ## Start the workshop cluster
 
 ```sh
-minikube start --cni=calico   # Calico so NetworkPolicies are enforced (Exercise 4)
+minikube start --cni=cilium   # Cilium so NetworkPolicies are enforced (Exercise 4)
 kubectl get nodes             # minikube   Ready   control-plane
 ```
 
-Low on memory? `minikube start --cni=calico --memory=3000`
+Low on memory? `minikube start --cni=cilium --memory=3000`
 
 ### Useful minikube commands
 
@@ -94,10 +96,10 @@ It checks that the node is `Ready` and that a test Pod can start. You should see
 | Problem | Fix |
 |---|---|
 | `Cannot connect to the Docker daemon` / no driver found | Start Docker Desktop / OrbStack / Podman first |
-| An old minikube cluster won't start | `minikube delete`, then `minikube start --cni=calico` again |
-| Node stays `NotReady` | Wait a minute; check `kubectl get pods -n kube-system` |
+| An old minikube cluster won't start | `minikube delete`, then `minikube start --cni=cilium` again |
+| Node stays `NotReady` | Cilium is still downloading (can take several minutes on slow Wi-Fi); watch `kubectl get pods -n kube-system` |
 | Not enough memory | `--memory=3000`; close other apps; give Docker 4 GB+ |
-| NetworkPolicies have no effect | Cluster started without Calico: `minikube delete` and start with `--cni=calico` |
+| NetworkPolicies have no effect | Cluster started without Cilium: `minikube delete` and start with `--cni=cilium` |
 | `ImagePullBackOff` | Your network can't reach the registry. See *Restricted networks* below |
 | Commands go to the wrong cluster | `kubectl config use-context minikube` |
 
@@ -112,7 +114,8 @@ Some networks block Google-hosted registries (`registry.k8s.io`, `gcr.io`) with
 - `05-resources-and-autoscaling/install-metrics-server.sh` enables the metrics-server
   addon from a Docker Hub mirror.
 
-Slow Wi-Fi? Pull the images once on your laptop and copy them into minikube:
+Slow Wi-Fi? Start the cluster at home (see the top of this page). The exercise images can
+also be pulled on your laptop and copied into minikube:
 
 ```sh
 for i in nginx:1.27 busybox:1.37 curlimages/curl:8.16.0; do
